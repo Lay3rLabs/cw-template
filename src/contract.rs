@@ -20,7 +20,7 @@ pub fn instantiate(
     {% if minimal %}_{% endif %}info: MessageInfo,
     {% if minimal %}_{% endif %}msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    {% if minimal %}unimplemented!(){% else %}let state = State {
+    {% if minimal %}Ok(Response::new()){% else %}let state = State {
         count: msg.count,
         owner: info.sender.clone(),
     };
