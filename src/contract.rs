@@ -1,30 +1,29 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{% raw %}{{% endraw %}{% unless minimal %}to_json_binary, {% endunless %}Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
-{% if minimal %}// {% endif %}use cw2::set_contract_version;
+use cw2::set_contract_version;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, {% unless minimal %}GetCountResponse, {% endunless %}InstantiateMsg, QueryMsg};
 {% unless minimal %}use crate::state::{State, STATE};
 {% endunless %}
-{% if minimal %}/*
-{% endif %}// version info for migration info
+// version info for migration info
 const CONTRACT_NAME: &str = "crates.io:{{project-name}}";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
-{% if minimal %}*/
-{% endif %}
+
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
-    {% if minimal %}_{% endif %}deps: DepsMut,
+    deps: DepsMut,
     _env: Env,
     {% if minimal %}_{% endif %}info: MessageInfo,
     {% if minimal %}_{% endif %}msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+
     {% if minimal %}Ok(Response::new()){% else %}let state = State {
         count: msg.count,
         owner: info.sender.clone(),
     };
-    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
